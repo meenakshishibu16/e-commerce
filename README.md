@@ -1,53 +1,34 @@
-# Phase 2 — Variants + Cart (Local, no-auth)
+# Phase 4 — Checkout + Orders (COD + Stripe Checkout)
 
-This is **Phase 2** of the e‑commerce build:
-- Product listing + detail (Phase 1)
-- **Size variants** per product
-- **Cart** (no login yet)
-  - Backend cart stored in MongoDB, keyed by a generated `cartId`
-  - Frontend stores `cartId` in `localStorage`
-  - Add/update/remove items + totals
+Adds on top of Phase 3:
+- Checkout page (address + payment method)
+- Cash on Delivery orders
+- Stripe Checkout payment
+- Orders list + details
 
-> Next phases will add: authentication (user carts), checkout + COD, Stripe, admin dashboard, wishlist, reviews.
-
----
-
-## 1) Backend setup
-
+## Backend
 ```bash
 cd backend
 npm install
-```
-
-Copy `.env.example` to `.env` (Windows PowerShell):
-```powershell
 copy .env.example .env
-```
-
-Run:
-```bash
 npm run seed
 npm run dev
 ```
 
----
+Edit `backend/.env` and set:
+- `JWT_SECRET`
+- `STRIPE_SECRET_KEY`
+- `FRONTEND_URL=http://localhost:5173`
 
-## 2) Frontend setup
-
+## Frontend
 ```bash
 cd ../frontend
 npm install
 npm run dev
 ```
 
-Open http://localhost:5173
-
----
-
-## 3) Key Phase 2 request flow (Add to cart)
-1) Select size on product detail
-2) Frontend calls `POST /api/cart/:cartId/items`
-3) Backend validates product + size, updates DB cart
-4) Backend returns cart JSON
-5) UI updates cart count + cart page
-
+Routes:
+- `/checkout`
+- `/orders`
+- `/payment/success?session_id=...`
+- `/payment/cancel`

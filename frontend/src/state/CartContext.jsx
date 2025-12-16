@@ -1,96 +1,68 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
-import { addCartItem, clearCart as apiClear, createCart, fetchCart, removeCartItem, updateCartItemQty } from "../api.js";
+import {
+  guestAddItem, guestClear, guestCreateCart, guestFetchCart, guestRemoveItem, guestUpdateQty,
+  userAddItem as apiUserAdd, userClear as apiUserClear, userFetchCart, userRemoveItem as apiUserRemove, userUpdateQty as apiUserUpdate
+} from "../api.js";
+import { useAuth } from "./AuthContext.jsx";
 
-const CartContext = createContext(null);
-const CART_ID_KEY = "phase2_cartId";
+const CartContext=createContext(null);
+const GUEST_CART_KEY="phase4_guestCartId";
 
-export function CartProvider({ children }) {
-  const [cartId, setCartId] = useState(() => localStorage.getItem(CART_ID_KEY) || "");
-  const [cart, setCart] = useState(null);
-  const [totals, setTotals] = useState({ subtotal: 0, itemCount: 0 });
-  const [loading, setLoading] = useState(false);
+export function CartProvider({children}){
+  const {token}=useAuth();
+  const [guestCartId,setGuestCartId]=useState(()=>localStorage.getItem(GUEST_CART_KEY)||"");
+  const [cart,setCart]=useState(null);
+  const [totals,setTotals]=useState({subtotal:0,itemCount:0});
+  const [loading,setLoading]=useState(false);
 
-  useEffect(() => {
-    let mounted = true;
-    (async () => {
-      if (cartId) return;
-      setLoading(true);
-      try {
-        const data = await createCart();
-        if (!mounted) return;
-        localStorage.setItem(CART_ID_KEY, data.cartId);
-        setCartId(data.cartId);
-        setCart(data.cart);
-        setTotals(data.totals);
-      } finally { if (mounted) setLoading(false); }
-    })();
-    return () => { mounted = false; };
-  }, [cartId]);
+  useEffect(()=>{let mounted=true;(async()=>{
+    if(token) return;
+    if(guestCartId) return;
+    setLoading(true);
+    try{const data=await guestCreateCart(); if(!mounted) return;
+      localStorage.setItem(GUEST_CART_KEY,data.cartId); setGuestCartId(data.cartId); setCart(data.cart); setTotals(data.totals);
+    } finally{if(mounted) setLoading(false)}
+  })(); return ()=>{mounted=false};},[token,guestCartId]);
 
-  useEffect(() => {
-    let mounted = true;
-    (async () => {
-      if (!cartId) return;
-      setLoading(true);
-      try {
-        const data = await fetchCart(cartId);
-        if (!mounted) return;
-        setCart(data.cart);
-        setTotals(data.totals);
-      } catch {
-        const created = await createCart();
-        if (!mounted) return;
-        localStorage.setItem(CART_ID_KEY, created.cartId);
-        setCartId(created.cartId);
-        setCart(created.cart);
-        setTotals(created.totals);
-      } finally { if (mounted) setLoading(false); }
-    })();
-    return () => { mounted = false; };
-  }, [cartId]);
-
-  async function addItem(productId, size, qty=1){
-    if(!cartId) return;
+  useEffect(()=>{let mounted=true;(async()=>{
     setLoading(true);
     try{
-      const data = await addCartItem(cartId, { productId, size, qty });
-      setCart(data.cart); setTotals(data.totals);
-    } finally { setLoading(false); }
-  }
+      if(token){const data=await userFetchCart(token); if(!mounted) return; setCart(data.cart); setTotals(data.totals);}
+      else if(guestCartId){const data=await guestFetchCart(guestCartId); if(!mounted) return; setCart(data.cart); setTotals(data.totals);}
+      else { if(!mounted) return; setCart({items:[]}); setTotals({subtotal:0,itemCount:0}); }
+    } finally{if(mounted) setLoading(false)}
+  })(); return ()=>{mounted=false};},[token,guestCartId]);
 
-  async function setQty(itemId, qty){
-    if(!cartId) return;
+  async function addItem(productId,size,qty=1){
     setLoading(true);
     try{
-      const data = await updateCartItemQty(cartId, itemId, qty);
-      setCart(data.cart); setTotals(data.totals);
-    } finally { setLoading(false); }
+      if(token){const data=await apiUserAdd(token,{productId,size,qty}); setCart(data.cart); setTotals(data.totals);}
+      else {const data=await guestAddItem(guestCartId,{productId,size,qty}); setCart(data.cart); setTotals(data.totals);}
+    } finally{setLoading(false)}
   }
-
+  async function setQty(itemId,qty){
+    setLoading(true);
+    try{
+      if(token){const data=await apiUserUpdate(token,itemId,qty); setCart(data.cart); setTotals(data.totals);}
+      else {const data=await guestUpdateQty(guestCartId,itemId,qty); setCart(data.cart); setTotals(data.totals);}
+    } finally{setLoading(false)}
+  }
   async function remove(itemId){
-    if(!cartId) return;
     setLoading(true);
     try{
-      const data = await removeCartItem(cartId, itemId);
-      setCart(data.cart); setTotals(data.totals);
-    } finally { setLoading(false); }
+      if(token){const data=await apiUserRemove(token,itemId); setCart(data.cart); setTotals(data.totals);}
+      else {const data=await guestRemoveItem(guestCartId,itemId); setCart(data.cart); setTotals(data.totals);}
+    } finally{setLoading(false)}
   }
-
   async function clear(){
-    if(!cartId) return;
     setLoading(true);
     try{
-      const data = await apiClear(cartId);
-      setCart(data.cart); setTotals(data.totals);
-    } finally { setLoading(false); }
+      if(token){const data=await apiUserClear(token); setCart(data.cart); setTotals(data.totals);}
+      else {const data=await guestClear(guestCartId); setCart(data.cart); setTotals(data.totals);}
+    } finally{setLoading(false)}
   }
 
-  const value = useMemo(() => ({ cartId, cart, totals, loading, addItem, setQty, remove, clear }), [cartId, cart, totals, loading]);
+  const value=useMemo(()=>({guestCartId,cart,totals,loading,addItem,setQty,remove,clear}),[guestCartId,cart,totals,loading]);
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }
-
-export function useCart(){
-  const ctx = useContext(CartContext);
-  if(!ctx) throw new Error("useCart must be used within CartProvider");
-  return ctx;
-}
+export function useCart(){const ctx=useContext(CartContext); if(!ctx) throw new Error("useCart must be used within CartProvider"); return ctx;}

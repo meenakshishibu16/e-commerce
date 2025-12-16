@@ -1,0 +1,10 @@
+import { Router } from "express";
+import { authRequired } from "../middleware/auth.js";
+import { confirmStripePayment, createCODOrder, createStripeCheckoutSession, getMyOrder, listMyOrders } from "../controllers/orderController.js";
+const router=Router();
+router.get("/", authRequired, listMyOrders);
+router.get("/:id", authRequired, getMyOrder);
+router.post("/cod", authRequired, createCODOrder);
+router.post("/stripe/create-session", authRequired, createStripeCheckoutSession);
+router.post("/stripe/confirm", authRequired, confirmStripePayment);
+export default router;
