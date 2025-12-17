@@ -39,7 +39,7 @@ export default function App() {
       <header className="nav">
         <div className="navInner">
           <Link className="brand" to="/">
-            UrbanClick.Co
+            UrbanClick.co
           </Link>
 
           <nav className="navMid">

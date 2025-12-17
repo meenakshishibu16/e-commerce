@@ -56,7 +56,7 @@ export default function Home(){
           </div>
 
           <div className="heroRight">
-            <img className="heroImg" src={HERO_IMG} alt="UrbanClick.Co hero" />
+            <img className="heroImg" src={HERO_IMG} alt="UrbanClick.co hero" />
           </div>
         </div>
       </div>

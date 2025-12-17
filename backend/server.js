@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import connectDB from "./src/db.js";
+import { seedProductsIfEmpty } from "./src/seed/products.seed.js";
 
 import productRoutes from "./src/routes/products.js";
 import authRoutes from "./src/routes/auth.js";
@@ -32,5 +33,6 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 5000;
 await connectDB(process.env.MONGODB_URI);
+await seedProductsIfEmpty();
 
 app.listen(PORT, () => console.log(`✅ Backend on http://localhost:${PORT}`));

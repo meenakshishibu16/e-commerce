@@ -7,7 +7,7 @@ export default function Contact(){
 
       <div className="split">
         <div className="imgCard" style={{minHeight:300}}>
-          <img src={CONTACT_IMG} alt="Contact UrbanClick.Co" />
+          <img src={CONTACT_IMG} alt="Contact UrbanClick.co" />
         </div>
 
         <div className="panel">
@@ -21,7 +21,7 @@ export default function Contact(){
 
           <div className="hr" />
 
-          <h3 style={{margin:"0 0 8px"}}>Careers at UrbanClick.Co</h3>
+          <h3 style={{margin:"0 0 8px"}}>Careers at UrbanClick.co</h3>
           <div className="small" style={{lineHeight:1.8}}>
             Learn more about our teams and job openings. (Demo content)
           </div>
