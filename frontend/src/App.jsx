@@ -38,12 +38,10 @@ export default function App() {
     <>
       <header className="nav">
         <div className="navInner">
-          {/* Left: Logo */}
           <Link className="brand" to="/">
-            FOREVER <span className="brandDot" />
+            UrbanClick.Co
           </Link>
 
-          {/* Center: Links */}
           <nav className="navMid">
             <Link className={`navLink ${activeHome ? "active" : ""}`} to="/">HOME</Link>
             <Link className={`navLink ${activeCol ? "active" : ""}`} to="/collection">COLLECTION</Link>
@@ -51,9 +49,12 @@ export default function App() {
             <Link className={`navLink ${activeContact ? "active" : ""}`} to="/contact">CONTACT</Link>
           </nav>
 
-          {/* Right: Icons */}
           <div className="navRight">
-            {/* User */}
+            {/* Orders icon */}
+            <Link className="iconBtn" to="/orders" title="Orders">
+              <span style={{fontSize:18}}>📦</span>
+            </Link>
+
             {!user ? (
               <Link className="iconBtn" to="/login" title="Account">
                 <span style={{fontSize:18}}>👤</span>
@@ -64,12 +65,10 @@ export default function App() {
               </button>
             )}
 
-            {/* Wishlist */}
             <Link className="iconBtn" to="/wishlist" title="Wishlist">
               <span style={{fontSize:18}}>♡</span>
             </Link>
 
-            {/* Cart */}
             <Link className="iconBtn cartBadge" to="/cart" title="Cart">
               <span style={{fontSize:18}}>🛍</span>
               <span className="cartCount">{count}</span>
@@ -80,29 +79,29 @@ export default function App() {
 
       <main className="container">
         <Routes>
-          {/* NEW PAGES */}
           <Route path="/" element={<Home />} />
           <Route path="/collection" element={<Collection />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
 
-          {/* Existing shop flow */}
           <Route path="/product/:id" element={<ProductDetail />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/checkout" element={<Checkout />} />
+
           <Route path="/orders" element={<Orders />} />
           <Route path="/orders/:id" element={<OrderDetail />} />
+
           <Route path="/payment/success" element={<PaymentSuccess />} />
           <Route path="/payment/cancel" element={<PaymentCancel />} />
+
           <Route path="/wishlist" element={<Wishlist />} />
 
-          {/* Auth */}
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
         </Routes>
 
         <div className="footer">
-          © {new Date().getFullYear()} FOREVER — Ultimate e-commerce store
+          © {new Date().getFullYear()} URBANCLICK.CO — Minimal e-commerce demo
         </div>
       </main>
     </>

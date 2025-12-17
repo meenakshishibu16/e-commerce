@@ -7,7 +7,7 @@ export default function Contact(){
 
       <div className="split">
         <div className="imgCard" style={{minHeight:300}}>
-          <img src={CONTACT_IMG} alt="Contact Forever" />
+          <img src={CONTACT_IMG} alt="Contact UrbanClick.Co" />
         </div>
 
         <div className="panel">
@@ -16,12 +16,12 @@ export default function Contact(){
             54709 Willms Station<br/>
             Suite 350, Washington, USA<br/><br/>
             Tel: (415) 555-0132<br/>
-            Email: admin@forever.com
+            Email: admin@urbanclick.co.com
           </div>
 
           <div className="hr" />
 
-          <h3 style={{margin:"0 0 8px"}}>Careers at Forever</h3>
+          <h3 style={{margin:"0 0 8px"}}>Careers at UrbanClick.Co</h3>
           <div className="small" style={{lineHeight:1.8}}>
             Learn more about our teams and job openings. (Demo content)
           </div>

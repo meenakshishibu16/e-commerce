@@ -130,12 +130,12 @@ export default function Cart() {
             <div className="hr" />
 
             <div className="kv">
-              <span className="small">Items</span>
+              <span className="small">Items : </span>
               <b>{totals?.itemCount || 0}</b>
             </div>
 
             <div className="kv" style={{ marginTop: 10 }}>
-              <span className="small">Subtotal</span>
+              <span className="small">Subtotal : </span>
               <b>{money(totals?.subtotal || 0)}</b>
             </div>
 

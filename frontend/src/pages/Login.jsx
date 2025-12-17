@@ -1,38 +1,102 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../state/AuthContext.jsx";
-import { useCart } from "../state/CartContext.jsx";
 
-export default function Login(){
-  const nav=useNavigate();
-  const {login,loading}=useAuth();
-  const {guestCartId}=useCart();
-  const [email,setEmail]=useState("");
-  const [password,setPassword]=useState("");
-  const [err,setErr]=useState("");
+const emailOk = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email || "").trim());
 
-  async function onSubmit(e){
+export default function Login() {
+  const nav = useNavigate();
+  const { login } = useAuth();
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const [errEmail, setErrEmail] = useState("");
+  const [errPass, setErrPass] = useState("");
+  const [serverErr, setServerErr] = useState("");
+  const [busy, setBusy] = useState(false);
+
+  async function onSubmit(e) {
     e.preventDefault();
-    setErr("");
-    try{await login({email,password,guestCartId:guestCartId||undefined}); nav("/");}
-    catch(e){setErr(e.message||"Login failed");}
+    setErrEmail("");
+    setErrPass("");
+    setServerErr("");
+
+    let ok = true;
+    if (!emailOk(email)) {
+      setErrEmail("Please enter a valid email address.");
+      ok = false;
+    }
+    if (String(password || "").length === 0) {
+      setErrPass("Password cannot be empty.");
+      ok = false;
+    }
+    if (!ok) return;
+
+    try {
+      setBusy(true);
+
+      // ✅ FIX: send one payload object
+      await login({ email: email.trim(), password });
+
+      nav("/");
+    } catch (e2) {
+      // show friendly message
+      setServerErr(e2.message || "Login failed. Please check your credentials.");
+    } finally {
+      setBusy(false);
+    }
   }
 
   return (
     <div className="form">
-      <div className="title" style={{marginTop:0}}>Login</div>
-      <div className="small">Login to checkout and view orders.</div>
+      <div className="title" style={{ marginTop: 0 }}>Login</div>
+      <div className="small">Welcome back. Please login to continue.</div>
       <div className="hr" />
+
+      {serverErr && (
+        <div
+          className="toast small"
+          style={{ borderColor: "#fecaca", background: "#fff1f2", color: "#991b1b" }}
+        >
+          {serverErr}
+        </div>
+      )}
+
       <form onSubmit={onSubmit}>
-        <input className="input" placeholder="Email" value={email} onChange={(e)=>setEmail(e.target.value)} />
-        <div style={{height:10}} />
-        <input className="input" placeholder="Password" type="password" value={password} onChange={(e)=>setPassword(e.target.value)} />
-        <div className="hr" />
-        {err && <div className="small">Error: {err}</div>}
-        <button className="btn" disabled={loading||!email||!password} type="submit">{loading?"Logging in…":"Login"}</button>
+        <div>
+          <input
+            className="input"
+            type="text"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          {errEmail && <div className="small" style={{ color: "#b91c1c", marginTop: 6 }}>{errEmail}</div>}
+        </div>
+
+        <div style={{ height: 12 }} />
+
+        <div>
+          <input
+            className="input"
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          {errPass && <div className="small" style={{ color: "#b91c1c", marginTop: 6 }}>{errPass}</div>}
+        </div>
+
+        <button className="btn" type="submit" disabled={busy}>
+          {busy ? "Logging in…" : "Login"}
+        </button>
       </form>
+
       <div className="hr" />
-      <div className="small">No account? <Link to="/register">Register</Link></div>
+      <div className="small">
+        Don’t have an account? <Link className="pill" to="/register">Register</Link>
+      </div>
     </div>
   );
 }

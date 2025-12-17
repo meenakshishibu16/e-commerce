@@ -7,13 +7,13 @@ export default function About(){
 
       <div className="split">
         <div className="imgCard" style={{minHeight:360}}>
-          <img src={ABOUT_IMG} alt="About Forever" />
+          <img src={ABOUT_IMG} alt="About UrbanClick.Co" />
         </div>
 
         <div className="panel">
           <div style={{lineHeight:1.8, color:"#111827"}}>
             <p>
-              <b>Forever</b> was built with a simple idea: make shopping feel calm, minimal, and fast.
+              <b>UrbanClick.Co</b> was built with a simple idea: make shopping feel calm, minimal, and fast.
               We focus on curated products, clean UI, and a seamless checkout experience.
             </p>
             <p>
